@@ -18,7 +18,7 @@ int stateOf_FSM_FULL;
 #define COUNT_DOWN_TIME 100
 #define COUNT_DOWN 	911
 #define SETTING 	119
-
+int toSETTING;
 
 void fsm_full();
 

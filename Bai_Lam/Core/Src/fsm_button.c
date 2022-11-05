@@ -10,7 +10,7 @@
 
 #include "fsm_button.h"
 int displayNumberOnSeg = 9;
-
+/* changeNum(): Change Value display on 7-seg LED */
 void changeNum(int index){
 	switch(index){
 	case 0:
@@ -28,8 +28,9 @@ void changeNum(int index){
 		break;
 	}
 }
-
+/* buttonState: buffer for saving buttons State*/
 int buttonState[NO_OF_BUTTONS] = {NORMAL_BUTTON,NORMAL_BUTTON,NORMAL_BUTTON};
+/* countTimerForHoldEventStart ratio to make sure button is Pressed 3s */
 int countTimerForHoldEventStart = BUTTON_DELAY_HOLD*3/BUTTON_DELAY_TIME;
 void fsm_button(){
 	for(int i = 0; i < NO_OF_BUTTONS; i++){
@@ -38,7 +39,8 @@ void fsm_button(){
 			if(timer1Flag == 1){
 				if(isButtonPressed(i) == 1){
 					buttonState[i] = PRESS_BUTTON;
-					stateOf_FSM_FULL = SETTING;
+					/*toSETTING is variable to change FSM_FULL state*/
+					toSETTING = SETTING;
 					setTimer2(FSM_TIME);
 					changeNum(i);
 					setTimer1(BUTTON_DELAY_TIME);
@@ -49,19 +51,25 @@ void fsm_button(){
 			if(timer1Flag == 1){
 				if(isButtonPressed(i) == 0){
 					buttonState[i] = NORMAL_BUTTON;
+					/*reset Value countTimerForHoldEventStart*/
 					countTimerForHoldEventStart = BUTTON_DELAY_HOLD*3/BUTTON_DELAY_TIME;
 					setTimer1(BUTTON_DELAY_TIME);
 				}
 				else{
 					if(countTimerForHoldEventStart <= 0){
+						/*reset Value countTimerForHoldEventStart*/
 						countTimerForHoldEventStart = BUTTON_DELAY_HOLD*3/BUTTON_DELAY_TIME;
 						buttonState[i] = HOLD_BUTTON;
 						changeNum(i);
-						stateOf_FSM_FULL = SETTING;
+						toSETTING = SETTING;
 						setTimer2(FSM_TIME);
 						setTimer1(BUTTON_DELAY_HOLD);
 					}
 					else{
+						/*	Timer is set flag every 50ms,
+						 *  so in this case, countTimerForHoldEventStart = 60 to make sure button
+						 *  must be pressed 3s to change state to long_press state
+						 */
 						countTimerForHoldEventStart--;
 						setTimer1(BUTTON_DELAY_TIME);
 					}
@@ -76,7 +84,7 @@ void fsm_button(){
 				}
 				else{
 					changeNum(i);
-					stateOf_FSM_FULL = SETTING;
+					toSETTING = SETTING;
 					setTimer2(FSM_TIME);
 					setTimer1(BUTTON_DELAY_HOLD);
 				}
