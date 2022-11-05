@@ -38,7 +38,6 @@ void fsm_button(){
 			if(timer1Flag == 1){
 				if(isButtonPressed(i) == 1){
 					buttonState[i] = PRESS_BUTTON;
-					HAL_GPIO_TogglePin(GPIOA, RED_Pin);
 					stateOf_FSM_FULL = SETTING;
 					setTimer2(FSM_TIME);
 					changeNum(i);
@@ -71,34 +70,16 @@ void fsm_button(){
 			break;
 		case HOLD_BUTTON:
 			if(timer1Flag == 1){
-				if(isButtonPressed(i) == 0)
+				if(isButtonPressed(i) == 0){
 					buttonState[i] = NORMAL_BUTTON;
+					setTimer1(BUTTON_DELAY_TIME);
+				}
 				else{
 					changeNum(i);
-					HAL_GPIO_TogglePin(GPIOA, RED_Pin);
 					stateOf_FSM_FULL = SETTING;
 					setTimer2(FSM_TIME);
 					setTimer1(BUTTON_DELAY_HOLD);
 				}
-			}
-			break;
-		case CHECK_DOUBLE:
-			if(isButtonPressed(i) == 1){
-				buttonState[i] = DOUBLE_CLICK;
-				setTimer1(BUTTON_DELAY_DOUBLE_CLICK_TIME);
-			}
-			if(timer1Flag == 1){
-
-				if(isButtonPressed(i) == 0){
-					buttonState[i] = NORMAL_BUTTON;
-				}
-					setTimer1(5);
-			}
-			break;
-		case DOUBLE_CLICK:
-			if(timer1Flag == 1){
-				buttonState[i] = NORMAL_BUTTON;
-				setTimer1(BUTTON_DELAY_DOUBLE_CLICK_TIME);
 			}
 			break;
 		default:
